@@ -3,13 +3,13 @@ from django.contrib import admin
 from manager.models import Book, Coment
 
 
-class ComentInline(admin.StackedInline):
+class CommentInline(admin.StackedInline):
     model = Coment
     extra = 1
 
 
 class BookAdmin(admin.ModelAdmin):
-    inlines = [ComentInline]
+    inlines = [CommentInline]
 
 
 admin.site.register(Book, BookAdmin)

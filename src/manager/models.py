@@ -8,9 +8,11 @@ class Book(models.Model):
         verbose_name_plural = 'книги'
 
     title = models.CharField(max_length=100, verbose_name='название книги')
-    test = models.TextField()
+    text = models.TextField()
     data = models.DateTimeField(auto_now_add=True)
     authors = models.ManyToManyField(User, related_name='books')
+    # liked_books получим книги, какие лайкнул юзер....вроде
+    likes = models.ManyToManyField(User, related_name='liked_books')
 
 
     def __str__(self):
@@ -23,5 +25,7 @@ class Coment(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='comments')
     #on_delete=models.CASCADE  при удалении книги будут удаленны все коменты
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
+    likes = models.ManyToManyField(User, related_name='liked_comments')
+
 
 
