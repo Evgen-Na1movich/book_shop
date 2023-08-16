@@ -8,7 +8,7 @@
 <h1>Книги</h1>
 {{ user }}
 {% for book in books %}
-    <h2>{{ book.title }}</h2>
+<a href="{% url 'info_book' book_id=book.id %}"><h2>{{ book.title }}</h2></a>
     <h3>{{ book.text }}</h3>
     <h4>{{ book.date }}</h4>
     <h4>{{ book.authors.all }}</h4>

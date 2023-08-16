@@ -29,8 +29,17 @@ class AddLikeView(View):
             book = Book.objects.get(id=book_id)
             if request.user in book.likes.all():
                 book.likes.remove(request.user)
+                book.count_likes -= 1
             else:
                 # создастся связь ManyToMany.
                 # в add должны передать объект того класса. который указали при создании ManyToMany
                 book.likes.add(request.user)
+                book.count_likes += 1
+            book.save()
             return redirect('list_view')
+
+class InfoBook(View):
+    def get(self, request, book_id):
+        data = { 'book' : Book.objects.get(id=book_id)}
+        return render(request, 'info_book.html', context=data)
+
