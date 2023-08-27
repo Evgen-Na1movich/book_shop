@@ -138,11 +138,11 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-INTERNAL_IPS = [
-    # ...
-    "127.0.0.1",
-    # ...
-]
+# INTERNAL_IPS = [
+#     # ...
+#     "127.0.0.1",
+#     # ...
+# ]
 
 hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
 INTERNAL_IPS = [ip[:-1] + '1' for ip in ips] + ['127.0.0.1']
@@ -161,11 +161,16 @@ CELERY_BROKER_URL = 'redis://redis_db_tms:6379'
 CELERY_RESULT_BACKEND = 'redis://redis_db_tms:6379'
 
 
+
+# CELERY_BROKER_URL = 'amqp://admin:mypass@rabbit:5672'
+# CELERY_RESULT_BACKEND = 'rpc://'
+
+
 '''
 пишем какую task запускать
 '''
 CELERY_BEAT_SCHEDULE = {
     "task_one": {
         "task": "manager.tasks.hello",
-        "schedule": 5,
+        "schedule": 120,
     },}

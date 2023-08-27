@@ -22,7 +22,7 @@ services:
 
   db:
     image: postgres
-    container_name: postgres_test
+    container_name: postgres_tms
     env_file:
       - db_keys.txt
     volumes:
@@ -45,7 +45,6 @@ services:
       - ./src:/src
 #    ports:
 #      - 5555:5555
-
 #    запускается celery, а не runserver.
 #    мы говорим celery запустить worker, который будет лежать в scr.
 #    -c 5 - сделает 5 workers. Если 1-й worker занят, то следующий возмет на себя задачу
