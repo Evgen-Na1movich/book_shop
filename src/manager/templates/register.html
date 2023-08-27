@@ -1,0 +1,18 @@
+{% extends "main.html" %}
+
+{% block title%}register{% endblock %}
+
+
+{% block content%}
+{% for m in messages %}
+    <h3 class="text-danger">{{ m }}</h3>
+{% endfor %}
+
+<form action="{% url 'register' %}" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <button type="submit" class="btn btn-primary"> register </button>
+
+</form>
+
+{% endblock %}

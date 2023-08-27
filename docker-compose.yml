@@ -1,0 +1,54 @@
+version: "3"
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: django_tms
+    volumes:
+      - ./src:/src
+    ports:
+      - 8000:8000
+    env_file:
+      - db_keys.txt
+    depends_on:
+      - db
+    command: bash -c "python manage.py makemigrations && python manage.py migrate &&
+      python manage.py runserver 0.0.0.0:8000"
+#    command: bash -c "gunicorn -w 9 src.wsgi:application -b 0.0.0.0:8000"
+
+
+
+  db:
+    image: postgres
+    container_name: postgres_test
+    env_file:
+      - db_keys.txt
+    volumes:
+      - ./backups:/backups
+    ports:
+      - "5432:5432"
+
+
+  redis_tms:
+    image: redis:latest
+    container_name: redis_db_tms
+
+
+  selery:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: celery_w_tms
+    volumes:
+      - ./src:/src
+#    ports:
+#      - 5555:5555
+
+#    запускается celery, а не runserver.
+#    мы говорим celery запустить worker, который будет лежать в scr.
+#    -c 5 - сделает 5 workers. Если 1-й worker занят, то следующий возмет на себя задачу
+#    -l info - логи уровня инфо
+#    -В - чтобы он сам запускал task по определенным правилам, которые прописываем в settings
+    command: bash -c "celery -A src worker -c 5 -l info -B"

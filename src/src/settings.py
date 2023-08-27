@@ -9,7 +9,8 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import os
+import socket
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -38,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "debug_toolbar",
+    'django_seed',
     'manager',
 
 ]
@@ -86,11 +88,11 @@ WSGI_APPLICATION = 'src.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'books_for_postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'localhost',
-        'PORT': 5432
+        'NAME': os.environ.get('POSTGRES_DB'),
+        'USER': os.environ.get('POSTGRES_USER'),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+        'HOST': os.environ.get('POSTGRES_HOST'),
+        'PORT': os.environ.get('POSTGRES_PORT')
     }
 }
 
@@ -141,3 +143,29 @@ INTERNAL_IPS = [
     "127.0.0.1",
     # ...
 ]
+
+hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+INTERNAL_IPS = [ip[:-1] + '1' for ip in ips] + ['127.0.0.1']
+
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://redis_db_tms://127.0.0.1:6379/1",
+
+    }
+}
+
+# django бедет посылать сообщения по адресу redis_db_tms:6379 для celery
+CELERY_BROKER_URL = 'redis://redis_db_tms:6379'
+CELERY_RESULT_BACKEND = 'redis://redis_db_tms:6379'
+
+
+'''
+пишем какую task запускать
+'''
+CELERY_BEAT_SCHEDULE = {
+    "task_one": {
+        "task": "manager.tasks.hello",
+        "schedule": 5,
+    },}

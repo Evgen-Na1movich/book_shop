@@ -1,10 +1,10 @@
 from django.contrib import admin
 
-from manager.models import Book, Coment
+from manager.models import Book, Comment
 
 
 class CommentInline(admin.StackedInline):
-    model = Coment
+    model = Comment
     extra = 1
 
 
@@ -13,4 +13,4 @@ class BookAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Book, BookAdmin)
-admin.site.register(Coment)
+admin.site.register(Comment)

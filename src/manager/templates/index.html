@@ -1,31 +1,42 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<h1>Книги</h1>
-{{ user }}
-{% for book in books %}
-<a href="{% url 'info_book' book_id=book.id %}"><h2>{{ book.title }}</h2></a>
+{% extends "main.html" %}
+
+{% block title%}login{% endblock %}
+
+
+{% block content%}
+<div class="container">
+    <h1>Книги</h1>
+    {{ user }}
+    {% if user.is_authenticated %}
+        <div class="d-grid gap-2 col-6 mx-auto">
+            <a href="add_book" class="btn btn-primary" type="button">Добавить книгу</a>
+        </div>
+    {% endif %}
+    {% for book in books %}
+    <a href="{% url 'detail_book' book_id=book.id %}"><h2>{{ book.title }}</h2></a>
     <h3>{{ book.text }}</h3>
     <h4>{{ book.date }}</h4>
-    <h4>{{ book.authors.all }}</h4>
-
-    <a href="{% url 'add_like' book_id=book.id %}"><h4>likes: {{ book.count_likes }}</h4></a>
-<!--  book.comments.exists - если у книги нет коментов то отображаться не будет-->
-    {% if book.comments.exists %}
-        <h5> Comments: </h5>
-        {% for comment in book.comments.all %}
-            <h6>{{ comment.text }}</h6>
-            <h6>{{ comment.user }}</h6>
-            <h6>{{ comment.likes_comments }}</h6>
-
-        {% endfor %}
+    <h5>{{ book.authors.all }}</h5>
+    {% if user in book.authors.all %}
+            <a href="{% url 'delete_book' book_id=book.id %}" class="btn btn-danger" type="button">Удалить книгу</a>
+            <a href="{% url 'update_book' book_id=book.id %}" class="btn btn-info" type="button">Обновить книгу</a>
     {% endif %}
-<br>
 
-{% endfor %}
-</body>
-</html>
+    <a href="{% url 'add_like' book_id=book.id location=0%}">
+        <h5>likes: {{ book.count_likes }}</h5></a>
+    {% if book.comments.exists %}
+    <h6> Comments: </h6>
+    {% for comment in book.comments.all %}
+    <h7>{{ comment.text }}</h7>
+    <h7>{{ comment.user.username }}</h7>
+
+    <h7>{{ comment.likes_comment }}</h7>
+    {% endfor %}
+    {% endif %}
+    <br>
+    <br>
+    <br>
+
+    {% endfor %}
+</div>
+{% endblock %}
